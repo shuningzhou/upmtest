@@ -1,31 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ParallelUnity;
 using Parallel;
 
-public class ColliderSizeUpdater : MonoBehaviour
+namespace Parallel.Sample
 {
-    ParallelBoxCollider _boxCollider;
-    Fix64 scale = Fix64.FromDivision(12, 10);
-
-    // Start is called before the first frame update
-    void Start()
+    public class ColliderSizeUpdater : MonoBehaviour
     {
-        _boxCollider = GetComponent<ParallelBoxCollider>();
-    }
+        ParallelBoxCollider _boxCollider;
+        Fix64 scale = Fix64.FromDivision(12, 10);
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Plus))
+        // Start is called before the first frame update
+        void Start()
         {
-            _boxCollider.UpdateShape(_boxCollider.size * scale);
+            _boxCollider = GetComponent<ParallelBoxCollider>();
         }
 
-        if (Input.GetKeyDown(KeyCode.Minus))
+        // Update is called once per frame
+        void Update()
         {
-            _boxCollider.UpdateShape(_boxCollider.size / scale);
+            if (Input.GetKeyDown(KeyCode.Plus))
+            {
+                _boxCollider.UpdateShape(_boxCollider.size * scale);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Minus))
+            {
+                _boxCollider.UpdateShape(_boxCollider.size / scale);
+            }
         }
     }
 }

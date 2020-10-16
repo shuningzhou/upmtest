@@ -3,37 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using Parallel;
 
-public class CollisionEvents : MonoBehaviour, IParallelCollision2D
+namespace Parallel.Sample
 {
-    PContactPoints2D contactPoints;
-
-    public void OnParallelCollisionEnter2D(PCollision2D collision)
+    public class CollisionEvents : MonoBehaviour, IParallelCollision2D
     {
-        ParallelRigidbody2D rb = collision.otherRigidbody as ParallelRigidbody2D;
-        Debug.Log($"OnParallelCollisionEnter2D {rb.gameObject.name}");
+        PContactPoints2D contactPoints;
 
-        collision.GetContactPoints(ref contactPoints);
+        public void OnParallelCollisionEnter2D(PCollision2D collision)
+        {
+            ParallelRigidbody2D rb = collision.otherRigidbody as ParallelRigidbody2D;
+            Debug.Log($"OnParallelCollisionEnter2D {rb.gameObject.name}");
 
-        Debug.Log($"OnParallelCollisionEnter2D {contactPoints}");
-    }
+            collision.GetContactPoints(ref contactPoints);
 
-    public void OnParallelCollisionExit2D(PCollision2D collision)
-    {
-        ParallelRigidbody2D rb = collision.otherRigidbody as ParallelRigidbody2D;
-        Debug.Log($"OnParallelCollisionExit2D {rb.gameObject.name}");
+            Debug.Log($"OnParallelCollisionEnter2D {contactPoints}");
+        }
 
-        collision.GetContactPoints(ref contactPoints);
+        public void OnParallelCollisionExit2D(PCollision2D collision)
+        {
+            ParallelRigidbody2D rb = collision.otherRigidbody as ParallelRigidbody2D;
+            Debug.Log($"OnParallelCollisionExit2D {rb.gameObject.name}");
 
-        Debug.Log($"OnParallelCollisionExit2D {contactPoints}");
-    }
+            collision.GetContactPoints(ref contactPoints);
 
-    public void OnParallelCollisionStay2D(PCollision2D collision)
-    {
-        ParallelRigidbody2D rb = collision.otherRigidbody as ParallelRigidbody2D;
-        Debug.Log($"OnParallelCollisionStay2D {rb.gameObject.name}");
+            Debug.Log($"OnParallelCollisionExit2D {contactPoints}");
+        }
 
-        collision.GetContactPoints(ref contactPoints);
+        public void OnParallelCollisionStay2D(PCollision2D collision)
+        {
+            ParallelRigidbody2D rb = collision.otherRigidbody as ParallelRigidbody2D;
+            Debug.Log($"OnParallelCollisionStay2D {rb.gameObject.name}");
 
-        Debug.Log($"OnParallelCollisionStay2D {contactPoints}");
+            collision.GetContactPoints(ref contactPoints);
+
+            Debug.Log($"OnParallelCollisionStay2D {contactPoints}");
+        }
     }
 }

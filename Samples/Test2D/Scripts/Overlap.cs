@@ -3,45 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using Parallel;
 
-public class Overlap : MonoBehaviour
+namespace Parallel.Sample
 {
-    public float circleRadius = 1f;
-    public float gizmoSize = 0.1f;
-    public LayerMask layerMask;
-
-    PShapeOverlapResult2D result;
-    bool _started;
-    // Start is called before the first frame update
-    void Start()
+    public class Overlap : MonoBehaviour
     {
-        _started = true;
-        result = new PShapeOverlapResult2D();
-    }
+        public float circleRadius = 1f;
+        public float gizmoSize = 0.1f;
+        public LayerMask layerMask;
 
-    private void OnDrawGizmos()
-    {
-        if(_started)
+        PShapeOverlapResult2D result;
+        bool _started;
+        // Start is called before the first frame update
+        void Start()
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, circleRadius);
+            _started = true;
+            result = new PShapeOverlapResult2D();
+        }
 
-            if (result.count > 0)
+        private void OnDrawGizmos()
+        {
+            if(_started)
             {
-                Gizmos.color = Color.magenta;
-                for (int i = 0; i < result.count; i++)
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(transform.position, circleRadius);
+
+                if (result.count > 0)
                 {
-                    ParallelRigidbody2D rigidBody2D = result.rigidbodies[i] as ParallelRigidbody2D;
-                    Gizmos.DrawWireSphere(rigidBody2D.transform.position, gizmoSize);
+                    Gizmos.color = Color.magenta;
+                    for (int i = 0; i < result.count; i++)
+                    {
+                        ParallelRigidbody2D rigidBody2D = result.rigidbodies[i] as ParallelRigidbody2D;
+                        Gizmos.DrawWireSphere(rigidBody2D.transform.position, gizmoSize);
+                    }
                 }
             }
         }
-    }
 
-    void Update()
-    {
-        Fix64Vec2 center = (Fix64Vec2)transform.position;
-        Fix64 radius = (Fix64)circleRadius;
+        void Update()
+        {
+            Fix64Vec2 center = (Fix64Vec2)transform.position;
+            Fix64 radius = (Fix64)circleRadius;
 
-        Parallel2D.OverlapCircle(center, radius, layerMask, result);
+            Parallel2D.OverlapCircle(center, radius, layerMask, result);
+        }
     }
 }
