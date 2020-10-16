@@ -22,8 +22,8 @@ namespace Parallel
         bool _initialized;
 
         //
-        internal Fix64Vec2 position;
-        internal Fix64 angle;
+        public Fix64Vec2 position;
+        public Fix64 angle;
 
         internal Fix64Vec2 linearVelocity;
         internal Fix64 angularVelocity;

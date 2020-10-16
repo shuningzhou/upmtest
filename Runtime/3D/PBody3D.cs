@@ -23,14 +23,14 @@ namespace Parallel
         UInt32 _maxStep;
         UInt32 _minStep;
         bool _initialized;
-        internal bool awake;
-        internal Fix64 sleepTime;
-        internal Fix64Vec3 position;
-        internal Fix64Quat orientation;
-        internal Fix64Quat orientation0;
+        public bool awake;
+        public Fix64 sleepTime;
+        public Fix64Vec3 position;
+        public Fix64Quat orientation;
+        public Fix64Quat orientation0;
 
-        internal Fix64Vec3 linearVelocity;
-        internal Fix64Vec3 angularVelocity;
+        public Fix64Vec3 linearVelocity;
+        public Fix64Vec3 angularVelocity;
 
         public UInt16 BodyID { get; private set; }
 

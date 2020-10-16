@@ -1,6 +1,8 @@
 {
-    "name": "com.socketweaver.parallel.editor",
-    "references": [],
+    "name": "com.socketweaver.parallel.Editor",
+    "references": [
+        "GUID:3df29359b5733f14da26bf1a2529a720"
+    ],
     "includePlatforms": [
         "Editor"
     ],
@@ -10,5 +12,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }
