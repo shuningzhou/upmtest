@@ -161,9 +161,11 @@ namespace Parallel.EditorTools
 
                 dstFile = Application.dataPath + "/Gizmos/Parallel";
 
+                bool mustUpdate = false;
                 if (!Directory.Exists(dstFile))
                 {
-                Directory.CreateDirectory(dstFile);
+                    mustUpdate = true;
+                    Directory.CreateDirectory(dstFile);
                 }
 
                 string kPackageRoot = "Packages/com.socketweaver.parallel";
@@ -181,7 +183,7 @@ namespace Parallel.EditorTools
                 var srcTime = Directory.GetCreationTime(path);
                 Debug.Log($"dstTime={dstTime}");
                 Debug.Log($"srcTime={srcTime}");
-                if(srcTime > dstTime)
+                if(srcTime > dstTime || mustUpdate)
                 {
                     Debug.Log("update icons");
                     
