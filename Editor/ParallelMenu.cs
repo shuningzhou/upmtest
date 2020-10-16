@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using Parallel;
+using System.IO;
 
 namespace Parallel.EditorTools
 {
@@ -124,6 +125,73 @@ namespace Parallel.EditorTools
 
             Selection.activeGameObject = gameObject;
             SceneView.FrameLastActiveSceneView();
+        }
+
+        [InitializeOnLoad]
+        static class InstallGizmos
+        {
+            public static void Copy(string sourceDirectory, string targetDirectory)
+            {
+                DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+                DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+
+                CopyAll(diSource, diTarget);
+            }
+
+            public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+            {
+                Directory.CreateDirectory(target.FullName);
+
+                // Copy each file into the new directory.
+                foreach (FileInfo fi in source.GetFiles())
+                {
+                    string path = Path.Combine(target.FullName, fi.Name);
+                    Debug.Log($"Copying src={fi.Name}");
+                    Debug.Log($"Copying dst={path}");
+                    fi.CopyTo(path, true);
+                }
+            }
+
+            static InstallGizmos()
+            {
+                string dstFile = Application.dataPath + "/Gizmos";
+
+                if (!Directory.Exists(dstFile))
+                    Directory.CreateDirectory(dstFile);
+
+                dstFile = Application.dataPath + "/Gizmos/Parallel";
+
+                if (!Directory.Exists(dstFile))
+                {
+                Directory.CreateDirectory(dstFile);
+                }
+
+                string kPackageRoot = "Packages/com.socketweaver.parallel";
+                string path = Path.GetFullPath(kPackageRoot + "/Gizmos/Parallel");
+                path = path.Replace('\\', '/'); // because of GetFullPath()
+                int index = path.LastIndexOf("/Editor");
+                if (index >= 0)
+                path = path.Substring(0, index);
+                if (path.Length > 0)
+                path = Path.GetFullPath(path);  // stupid backslashes
+
+                Debug.Log(path);
+
+                var dstTime = Directory.GetCreationTime(dstFile);
+                var srcTime = Directory.GetCreationTime(path);
+                Debug.Log($"dstTime={dstTime}");
+                Debug.Log($"srcTime={srcTime}");
+                if(srcTime > dstTime)
+                {
+                    Debug.Log("update icons");
+                    
+                    Copy(path, dstFile);
+                }
+                else{
+                    Debug.Log("icons update-to-date");
+                }
+                
+            }
         }
     }
 }
