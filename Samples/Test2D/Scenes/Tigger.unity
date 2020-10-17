@@ -321,6 +321,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2714b05307525a34a8ed6c96406083c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _body2D:
+    position:
+      RawX: 0
+      RawY: 0
+    angle:
+      Raw: 0
   _bodyID: 0
   _bodyType: 2
   _linearDampling:
@@ -399,7 +405,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d1ce8950ec391d34a8807a58b286f639, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 644f6fcd11baccd4bb2db8f80471a21f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
