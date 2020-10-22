@@ -76,9 +76,14 @@ namespace Parallel
             return (Raw == other.Raw);
         }
 
-        public static explicit operator Fix64(int value)
+        public static implicit operator Fix64(int value)
         {
             return Fix64.FromRaw((long)value << FixedConstants64.SHIFT);
+        }
+
+        public static implicit operator int(Fix64 value)
+        {
+            return (int)(value.Raw >> FixedConstants64.SHIFT);
         }
 
         public static explicit operator Fix64(float value)
