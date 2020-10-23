@@ -30,12 +30,10 @@ namespace Parallel
         void OnParallelCollisionStay(PCollision3D collision);
         void OnParallelCollisionExit(PCollision3D collision);
 
-        void OnParallelTriggerEnter(ParallelRigidbody3D other);
-        void OnParallelTriggerStay(ParallelRigidbody3D other);
-        void OnParallelTriggerExit(ParallelRigidbody3D other);
-
-        void WriteNative();
-        void ReadNative();
+        void OnParallelTriggerEnter(IParallelRigidbody3D other);
+        void OnParallelTriggerStay(IParallelRigidbody3D other);
+        void OnParallelTriggerExit(IParallelRigidbody3D other);
+        void OnTransformUpdated();
         void Step(Fix64 timeStep);
     }
 

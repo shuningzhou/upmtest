@@ -34,14 +34,14 @@ namespace Parallel
 
         public UInt16 BodyID { get; private set; }
 
-        public ParallelRigidbody3D RigidBody { get; private set; }
+        public IParallelRigidbody3D RigidBody { get; private set; }
         public bool IsAwake
         {
             get{
                 return awake;
             }
         }
-        public PBody3D(IntPtr intPtr, UInt16 bodyID, ParallelRigidbody3D rigidBody, UInt16 exportSize) : base(intPtr)
+        public PBody3D(IntPtr intPtr, UInt16 bodyID, IParallelRigidbody3D rigidBody, UInt16 exportSize) : base(intPtr)
         {
             BodyID = bodyID;
             RigidBody = rigidBody;
@@ -60,6 +60,12 @@ namespace Parallel
         public void ReadNative()
         {
             Parallel3D.ReadNativeBody(this);
+            RigidBody.OnTransformUpdated();
+        }
+
+        public void Step(Fix64 time)
+        {
+            RigidBody.Step(time);
         }
 
         public void SaveExport(UInt32 step)

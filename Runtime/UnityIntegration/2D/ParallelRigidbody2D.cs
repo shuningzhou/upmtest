@@ -29,10 +29,6 @@ namespace Parallel
         [SerializeField]
         int _bodyID;
 
-        //used for updating the transform in the physics engine
-        Fix64Vec3 _tempPos;
-        Fix64Vec3 _tempEulerAngles;
-
         //============================== Body properties ==============================
         [SerializeField]
         BodyType _bodyType = Parallel.BodyType.Dynamic;

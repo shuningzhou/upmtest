@@ -9,17 +9,20 @@ namespace Parallel.Sample
     {
         public void OnParallelCollisionEnter3D(PCollision3D collision)
         {
-            Debug.Log($"OnParallelCollisionEnter3D {collision.otherRigidbody.gameObject.name}");
+            ParallelRigidbody3D rb = collision.otherRigidbody as ParallelRigidbody3D;
+            Debug.Log($"OnParallelCollisionEnter3D {rb.gameObject.name}");
         }
 
         public void OnParallelCollisionExit3D(PCollision3D collision)
         {
-            Debug.Log($"OnParallelCollisionExit3D {collision.otherRigidbody.gameObject.name}");
+            ParallelRigidbody3D rb = collision.otherRigidbody as ParallelRigidbody3D;
+            Debug.Log($"OnParallelCollisionExit3D {rb.gameObject.name}");
         }
 
         public void OnParallelCollisionStay3D(PCollision3D collision)
         {
-            Debug.Log($"OnParallelCollisionStay3D {collision.otherRigidbody.gameObject.name}");
+            ParallelRigidbody3D rb = collision.otherRigidbody as ParallelRigidbody3D;
+            Debug.Log($"OnParallelCollisionStay3D {rb.gameObject.name}");
         }
     }
 }

@@ -146,8 +146,8 @@ namespace Parallel.EditorTools
                 foreach (FileInfo fi in source.GetFiles())
                 {
                     string path = Path.Combine(target.FullName, fi.Name);
-                    Debug.Log($"Copying src={fi.Name}");
-                    Debug.Log($"Copying dst={path}");
+                    //Debug.Log($"Copying src={fi.Name}");
+                    //Debug.Log($"Copying dst={path}");
                     fi.CopyTo(path, true);
                 }
             }
@@ -181,16 +181,16 @@ namespace Parallel.EditorTools
 
                 var dstTime = Directory.GetCreationTime(dstFile);
                 var srcTime = Directory.GetCreationTime(path);
-                Debug.Log($"dstTime={dstTime}");
-                Debug.Log($"srcTime={srcTime}");
+                //Debug.Log($"dstTime={dstTime}");
+                //Debug.Log($"srcTime={srcTime}");
                 if(srcTime > dstTime || mustUpdate)
                 {
-                    Debug.Log("update icons");
+                    Debug.Log("Parallel icons updated");
                     
                     Copy(path, dstFile);
                 }
                 else{
-                    Debug.Log("icons update-to-date");
+                    //Debug.Log("icons update-to-date");
                 }
                 
             }

@@ -8,15 +8,12 @@ namespace Parallel
     {
         public Parallel.LogLevel LoggingLevel;
         public bool autoUpdate = true;
-
-        public float fixedUpdateTime;
-        public Fix64 fixedUpdateTime64 = Fix64.FromDivision(2, 100);
-
+        public Fix64 fixedUpdateTime = Fix64.FromDivision(2, 100);
         public int velocityIteration = 4;
-        public int positionIteration = 2;
+
+        public Fix64Vec2 gravity = new Fix64Vec2(Fix64.zero, Fix64.FromDivision(-98, 10));
 
         public UInt16 bodyExportSize = 128;
-
         bool _initialized = false;
 
         public void InitIfNecessary()
@@ -24,6 +21,7 @@ namespace Parallel
             if(!_initialized)
             {
                 _initialized = true;
+                Parallel2D.gravity = gravity;
                 Parallel2D.SetLoggingLevel(LoggingLevel);
                 Parallel2D.bodyExportSize = bodyExportSize;
             }
@@ -43,25 +41,25 @@ namespace Parallel
         {
             if(autoUpdate)
             {
-                Step();
-                ExcuteUserCallbacks();
-                ExcuteUserFixedUpdate();
+                Step(fixedUpdateTime);
+                ExcuteUserCallbacks(fixedUpdateTime);
+                ExcuteUserFixedUpdate(fixedUpdateTime);
             }
         }
 
-        public void Step()
+        public void Step(Fix64 deltaTime)
         {
-            Parallel2D.Step(fixedUpdateTime64, velocityIteration, positionIteration); 
+            Parallel2D.Step(deltaTime, velocityIteration, 1); 
         }
 
-        public void ExcuteUserCallbacks()
+        public void ExcuteUserCallbacks(Fix64 deltaTime)
         {
-            Parallel2D.ExcuteUserCallbacks(fixedUpdateTime64);
+            Parallel2D.ExcuteUserCallbacks(deltaTime);
         }
 
-        public void ExcuteUserFixedUpdate()
+        public void ExcuteUserFixedUpdate(Fix64 deltaTime)
         {
-            Parallel2D.ExcuteUserFixedUpdate(fixedUpdateTime64);
+            Parallel2D.ExcuteUserFixedUpdate(deltaTime);
         }
 
         public void Update()
@@ -70,8 +68,8 @@ namespace Parallel
             {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    Step();
-                    ExcuteUserCallbacks();
+                    Step(fixedUpdateTime);
+                    ExcuteUserCallbacks(fixedUpdateTime);
                 }
             }
         }

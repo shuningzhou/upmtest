@@ -31,7 +31,7 @@ namespace Parallel.Sample
                     Gizmos.color = Color.magenta;
                     for (int i = 0; i < result.count; i++)
                     {
-                        ParallelRigidbody3D rigidBody3D = result.rigidbodies[i];
+                        ParallelRigidbody3D rigidBody3D = result.rigidbodies[i] as ParallelRigidbody3D;
                         Gizmos.DrawWireSphere(rigidBody3D.transform.position + Vector3.up * 2, gizmoSize);
                     }
                 }

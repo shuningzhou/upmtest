@@ -31,9 +31,6 @@ namespace Parallel
         int _bodyID;
         [SerializeField]
         bool _awake;
-        //used for updating the transform in the physics engine
-        Fix64Vec3 _tempPos;
-        Fix64Quat _tempRot;
 
         //============================== Body properties ==============================
         [SerializeField]
@@ -80,9 +77,6 @@ namespace Parallel
             }
         }
 
-        //false if user changed body properties
-        bool _bodyDirty;
-
         public BodyType bodyType
         {
             get
@@ -91,8 +85,16 @@ namespace Parallel
             }
             set
             {
-                _bodyDirty = true;
                 _bodyType = value;
+                Parallel3D.UpdateBodyProperties(
+                    _body3D, 
+                    (int)bodyType, 
+                    linearDamping, 
+                    angularDamping, 
+                    gravityScale, 
+                    fixedRotationX, 
+                    fixedRotationY, 
+                    fixedRotationZ);
             }
         }
 
@@ -104,8 +106,16 @@ namespace Parallel
             }
             set
             {
-                _bodyDirty = true;
                 _linearDamping = value;
+                Parallel3D.UpdateBodyProperties(
+                    _body3D, 
+                    (int)bodyType, 
+                    linearDamping, 
+                    angularDamping, 
+                    gravityScale, 
+                    fixedRotationX, 
+                    fixedRotationY, 
+                    fixedRotationZ);
             }
         }
 
@@ -117,8 +127,16 @@ namespace Parallel
             }
             set
             {
-                _bodyDirty = true;
                 _angularDamping = value;
+                Parallel3D.UpdateBodyProperties(
+                    _body3D, 
+                    (int)bodyType, 
+                    linearDamping, 
+                    angularDamping, 
+                    gravityScale, 
+                    fixedRotationX, 
+                    fixedRotationY, 
+                    fixedRotationZ);
             }
         }
 
@@ -130,8 +148,16 @@ namespace Parallel
             }
             set
             {
-                _bodyDirty = true;
                 _gravityScale = value;
+                Parallel3D.UpdateBodyProperties(
+                    _body3D, 
+                    (int)bodyType, 
+                    linearDamping, 
+                    angularDamping, 
+                    gravityScale, 
+                    fixedRotationX, 
+                    fixedRotationY, 
+                    fixedRotationZ);
             }
         }
 
@@ -143,8 +169,16 @@ namespace Parallel
             }
             set
             {
-                _bodyDirty = true;
                 _fixedRotationX = value;
+                Parallel3D.UpdateBodyProperties(
+                    _body3D, 
+                    (int)bodyType, 
+                    linearDamping, 
+                    angularDamping, 
+                    gravityScale, 
+                    fixedRotationX, 
+                    fixedRotationY, 
+                    fixedRotationZ);
             }
         }
 
@@ -156,8 +190,16 @@ namespace Parallel
             }
             set
             {
-                _bodyDirty = true;
                 _fixedRotationY = value;
+                Parallel3D.UpdateBodyProperties(
+                    _body3D, 
+                    (int)bodyType, 
+                    linearDamping, 
+                    angularDamping, 
+                    gravityScale, 
+                    fixedRotationX, 
+                    fixedRotationY, 
+                    fixedRotationZ);
             }
         }
 
@@ -169,29 +211,30 @@ namespace Parallel
             }
             set
             {
-                _bodyDirty = true;
                 _fixedRotationZ = value;
+                Parallel3D.UpdateBodyProperties(
+                    _body3D, 
+                    (int)bodyType, 
+                    linearDamping, 
+                    angularDamping, 
+                    gravityScale, 
+                    fixedRotationX, 
+                    fixedRotationY, 
+                    fixedRotationZ);
             }
         }
 
         //============================== Velocity ==============================
-        //user changed body velocity
-        bool _velocityDirty;
-        Fix64Vec3 _tempLinearVelocity;
-        // rad/sec, z-axis (out of the screen)
-        Fix64Vec3 _tempAngularVelocity;
-
-        //todo: set native directly
         public Fix64Vec3 LinearVelocity
         {
             get
             {
-                return _tempLinearVelocity;
+                return _body3D.linearVelocity;
             }
             set
             {
-                _velocityDirty = true;
-                _tempLinearVelocity = value;
+                _body3D.linearVelocity = value;
+                Parallel3D.UpdateBodyVelocity(_body3D, LinearVelocity, AngularVelocity);
             }
         }
 
@@ -199,12 +242,12 @@ namespace Parallel
         {
             get
             {
-                return _tempAngularVelocity;
+                return _body3D.angularVelocity;
             }
             set
             {
-                _velocityDirty = true;
-                _tempAngularVelocity = value;
+                _body3D.angularVelocity = value;
+                Parallel3D.UpdateBodyVelocity(_body3D, LinearVelocity, AngularVelocity);
             }
         }
 
@@ -280,35 +323,32 @@ namespace Parallel
             }
         }
 
-        public void OnParallelTriggerEnter(ParallelRigidbody3D other)
+        public void OnParallelTriggerEnter(IParallelRigidbody3D other)
         {
             foreach (IParallelTrigger3D trigger in parallelTriggers)
             {
-                trigger.OnParallelTriggerEnter3D(other);
+                trigger.OnParallelTriggerEnter3D(other as ParallelRigidbody3D);
             }
         }
 
-        public void OnParallelTriggerStay(ParallelRigidbody3D other)
+        public void OnParallelTriggerStay(IParallelRigidbody3D other)
         {
             foreach (IParallelTrigger3D trigger in parallelTriggers)
             {
-                trigger.OnParallelTriggerStay3D(other);
+                trigger.OnParallelTriggerStay3D(other as ParallelRigidbody3D);
             }
         }
 
-        public void OnParallelTriggerExit(ParallelRigidbody3D other)
+        public void OnParallelTriggerExit(IParallelRigidbody3D other)
         {
             foreach (IParallelTrigger3D trigger in parallelTriggers)
             {
-                trigger.OnParallelTriggerExit3D(other);
+                trigger.OnParallelTriggerExit3D(other as ParallelRigidbody3D);
             }
         }
 
-        public void ReadNative()
+        public void OnTransformUpdated()
         {
-            _body3D.ReadNative();
-            _tempAngularVelocity = _body3D.angularVelocity;
-            _tempLinearVelocity = _body3D.linearVelocity;
             _awake = _body3D.IsAwake;
             pTransform._internal_WriteTranform(_body3D.position, _body3D.orientation);
         }
@@ -318,34 +358,6 @@ namespace Parallel
             foreach (IParallelFixedUpdate parallelFixedUpdate in parallelFixedUpdates)
             {
                 parallelFixedUpdate.ParallelFixedUpdate(timeStep);
-            }
-        }
-
-        public void WriteNative()
-        {
-            if (_bodyDirty)
-            {
-                _bodyDirty = false;
-                Parallel3D.UpdateBodyProperties(
-                    _body3D, 
-                    (int)bodyType, 
-                    linearDamping, 
-                    angularDamping, 
-                    gravityScale, 
-                    fixedRotationX, 
-                    fixedRotationY, 
-                    fixedRotationZ);
-            }
-
-            foreach (ParallelCollider3D collider in colliders)
-            {
-                collider.UpdateNativeShapeIfNecessary(gameObject);
-            }
-
-            if (_velocityDirty)
-            {
-                _velocityDirty = false;
-                Parallel3D.UpdateBodyVelocity(_body3D, _tempLinearVelocity, _tempAngularVelocity);
             }
         }
 

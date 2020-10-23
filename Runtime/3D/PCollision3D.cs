@@ -11,7 +11,7 @@ namespace Parallel
             }
         }
 
-        public ParallelRigidbody3D otherRigidbody { get; private set; }
+        public IParallelRigidbody3D otherRigidbody { get; private set; }
 
         public Fix64Vec3 relativeVelocity
         {
@@ -24,7 +24,7 @@ namespace Parallel
         PContact3D _contact;
         UInt16 _otherBodyID;
 
-        internal void SetContact(PContact3D contact, ParallelRigidbody3D rigidBody)
+        internal void SetContact(PContact3D contact, IParallelRigidbody3D rigidBody)
         {
             _contact = contact;
             otherRigidbody = rigidBody;

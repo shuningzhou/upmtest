@@ -76,7 +76,7 @@ namespace Parallel
 
     public struct PRaycastHit3D
     {
-        public ParallelRigidbody3D rigidbody;
+        public IParallelRigidbody3D rigidbody;
         public Fix64Vec3 point;
         public Fix64Vec3 normal;
         public Fix64 fraction;
@@ -84,7 +84,7 @@ namespace Parallel
 
     public struct PShapecastHit3D
     {
-        public ParallelRigidbody3D rigidbody;
+        public IParallelRigidbody3D rigidbody;
         public Fix64Vec3 point;
         public Fix64Vec3 normal;
         public Fix64 fraction;
@@ -92,13 +92,13 @@ namespace Parallel
 
     public class PShapeOverlapResult3D
     {
-        public ParallelRigidbody3D[] rigidbodies;
+        public IParallelRigidbody3D[] rigidbodies;
         public int count;
 
         public PShapeOverlapResult3D()
         {
             count = 0;
-            rigidbodies = new ParallelRigidbody3D[ParallelConstants.SHAPE_OVERLAP_BODY_COUNT_3D];
+            rigidbodies = new IParallelRigidbody3D[ParallelConstants.SHAPE_OVERLAP_BODY_COUNT_3D];
         }
     }
 
@@ -195,8 +195,7 @@ namespace Parallel
 
     public class Parallel3D
     {
-        static List<IParallelRigidbody3D> rigidBodies = new List<IParallelRigidbody3D>();
-        static Dictionary<UInt32, PBody3D> bodyDictionary = new Dictionary<UInt32, PBody3D>();
+        static SortedList<UInt32, PBody3D> bodySortedList = new SortedList<UInt32, PBody3D>();
 
         //CONTACT
         static int _contactCount;
@@ -267,9 +266,8 @@ namespace Parallel
         {
             if (initialized)
             {
-                rigidBodies.Clear();
                 masksByLayer.Clear();
-
+                bodySortedList.Clear();
                 DestroyWorld(internalWorld);
                 initialized = false;
             }
@@ -357,11 +355,10 @@ namespace Parallel
             }
 
             //using (new SProfiler($"rigidBody"))
+            foreach(var pair in bodySortedList)
             {
-                foreach (IParallelRigidbody3D rigidBody in rigidBodies)
-                {
-                    rigidBody.ReadNative();
-                }
+                PBody3D body = pair.Value;
+                body.ReadNative();
             }
         }
 
@@ -375,8 +372,8 @@ namespace Parallel
             {
                 PContact3D contact = currentWrapper.contact;
 
-                PBody3D body1 = bodyDictionary[contact.Body1ID];
-                PBody3D body2 = bodyDictionary[contact.Body2ID];
+                PBody3D body1 = bodySortedList[contact.Body1ID];
+                PBody3D body2 = bodySortedList[contact.Body2ID];
 
                 if (contact.IsTrigger)
                 {
@@ -405,8 +402,8 @@ namespace Parallel
 
                 if (contact.state == ContactState.Active)
                 {
-                    PBody3D body1 = bodyDictionary[contact.Body1ID];
-                    PBody3D body2 = bodyDictionary[contact.Body2ID];
+                    PBody3D body1 = bodySortedList[contact.Body1ID];
+                    PBody3D body2 = bodySortedList[contact.Body2ID];
 
                     if (contact.IsTrigger)
                     {
@@ -432,8 +429,8 @@ namespace Parallel
             for (int i = 0; i < _enterContactCount; i++)
             {
                 PContact3D contact = currentWrapper.contact;
-                PBody3D body1 = bodyDictionary[contact.Body1ID];
-                PBody3D body2 = bodyDictionary[contact.Body2ID];
+                PBody3D body1 = bodySortedList[contact.Body1ID];
+                PBody3D body2 = bodySortedList[contact.Body2ID];
 
                 if (contact.IsTrigger)
                 {
@@ -452,15 +449,14 @@ namespace Parallel
                 contact.state = ContactState.Active;
                 currentWrapper = currentWrapper.next;
             }
+        }
 
-            foreach (IParallelRigidbody3D rigidBody in rigidBodies)
+        public static void ExcuteUserFixedUpdate(Fix64 time)
+        {
+            foreach(var pair in bodySortedList)
             {
-                rigidBody.Step(timeStep);
-            }
-
-            foreach (IParallelRigidbody3D rigidBody in rigidBodies)
-            {
-                rigidBody.WriteNative();
+                PBody3D body = pair.Value;
+                body.Step(time);
             }
         }
 
@@ -699,8 +695,7 @@ namespace Parallel
                 ref bodyID);
 
             PBody3D body = new PBody3D(m_NativeObject, bodyID, rigidBody as ParallelRigidbody3D, bodyExportSize);
-            rigidBodies.Add(rigidBody);
-            bodyDictionary[bodyID] = body;
+            bodySortedList[bodyID] = body;
 
             ReadNativeBody(body);
 
@@ -864,14 +859,9 @@ namespace Parallel
                 Initialize();
             }
 
-            if (rigidBodies.Contains(rigidBody3D))
+            if(bodySortedList.ContainsKey(body.BodyID))
             {
-                rigidBodies.Remove(rigidBody3D);
-            }
-
-            if (bodyDictionary.ContainsKey(body.BodyID))
-            {
-                bodyDictionary.Remove(body.BodyID);
+                bodySortedList.Remove(body.BodyID);
             }
 
             NativeParallel3D.DestroyBody(internalWorld.IntPointer, body.IntPointer);
@@ -1029,9 +1019,9 @@ namespace Parallel
                 raycastHit3D.point = point;
                 raycastHit3D.normal = normal;
                 raycastHit3D.fraction = fraction;
-                if (bodyDictionary.ContainsKey(bodyID))
+                if (bodySortedList.ContainsKey(bodyID))
                 {
-                    raycastHit3D.rigidbody = bodyDictionary[bodyID].RigidBody;
+                    raycastHit3D.rigidbody = bodySortedList[bodyID].RigidBody;
                 }
                 else
                 {
@@ -1077,9 +1067,9 @@ namespace Parallel
                 shapeCastHit3D.normal = normal;
                 shapeCastHit3D.fraction = fraction;
 
-                if (bodyDictionary.ContainsKey(bodyID))
+                if (bodySortedList.ContainsKey(bodyID))
                 {
-                    shapeCastHit3D.rigidbody = bodyDictionary[bodyID].RigidBody;
+                    shapeCastHit3D.rigidbody = bodySortedList[bodyID].RigidBody;
                 }
                 else
                 {
@@ -1115,9 +1105,9 @@ namespace Parallel
             for (int i = 0; i < count; i++)
             {
                 UInt16 bodyID = _queryBodyIDs[i];
-                if (bodyDictionary.ContainsKey(bodyID))
+                if (bodySortedList.ContainsKey(bodyID))
                 {
-                    shapeOverlapResult.rigidbodies[i] = bodyDictionary[bodyID].RigidBody;
+                    shapeOverlapResult.rigidbodies[i] = bodySortedList[bodyID].RigidBody;
                 }
                 else
                 {
@@ -1144,9 +1134,9 @@ namespace Parallel
             for (int i = 0; i < count; i++)
             {
                 UInt16 bodyID = _queryBodyIDs[i];
-                if (bodyDictionary.ContainsKey(bodyID))
+                if (bodySortedList.ContainsKey(bodyID))
                 {
-                    shapeOverlapResult.rigidbodies[i] = bodyDictionary[bodyID].RigidBody;
+                    shapeOverlapResult.rigidbodies[i] = bodySortedList[bodyID].RigidBody;
                 }
                 else
                 {

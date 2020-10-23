@@ -6,11 +6,10 @@ namespace Parallel
     public class ParallelPhysicsController3D : MonoBehaviour
     {
         public Parallel.LogLevel LoggingLevel;
-        public bool Debugging = false;
+        public bool autoUpdate = false;
         public Fix64 fixedUpdateTime = Fix64.FromDivision(2, 100);
         public float speed = 1;
         public int velocityIteration = 4;
-        public int positionIteration = 1;
         public bool allowSleep = true;
         public bool warmStart = true;
         public Fix64Vec3 gravity = new Fix64Vec3(Fix64.zero, Fix64.FromDivision(-98, 10), Fix64.zero);
@@ -44,35 +43,40 @@ namespace Parallel
 
         private void FixedUpdate()
         {
-            if (!Debugging)
+            if (autoUpdate)
             {
-                Step();
-                ExcuteUserCallbacks();
+                Step(fixedUpdateTime);
+                ExcuteUserCallbacks(fixedUpdateTime);
+                ExcuteUserFixedUpdate(fixedUpdateTime);
             }
         }
 
-        public void Step()
+        public void Step(Fix64 deltaTime)
         {
-            Parallel3D.Step(fixedUpdateTime, velocityIteration, positionIteration);
+            Parallel3D.Step(deltaTime, velocityIteration, 1);
         }
 
-        public void ExcuteUserCallbacks()
+        public void ExcuteUserCallbacks(Fix64 deltaTime)
         {
             //using (new SProfiler($"==========ExcuteUserCallbacks========"))
             {
-                Parallel3D.ExcuteUserCallbacks(fixedUpdateTime);
+                Parallel3D.ExcuteUserCallbacks(deltaTime);
             }
+        }
+
+        public void ExcuteUserFixedUpdate(Fix64 deltaTime)
+        {
+            Parallel3D.ExcuteUserFixedUpdate(deltaTime);
         }
 
         public void Update()
         {
-            //Time.fixedDeltaTime = 0.02f * (1 / speed);
-            if (Debugging)
+            if (!autoUpdate)
             {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    Step();
-                    ExcuteUserCallbacks();
+                    Step(fixedUpdateTime);
+                    ExcuteUserCallbacks(fixedUpdateTime);
                 }
             }
         }
