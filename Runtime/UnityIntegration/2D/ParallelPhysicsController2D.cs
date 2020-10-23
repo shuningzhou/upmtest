@@ -12,7 +12,6 @@ namespace Parallel
         public int velocityIteration = 4;
 
         public Fix64Vec2 gravity = new Fix64Vec2(Fix64.zero, Fix64.FromDivision(-98, 10));
-
         public UInt16 bodyExportSize = 128;
         bool _initialized = false;
 

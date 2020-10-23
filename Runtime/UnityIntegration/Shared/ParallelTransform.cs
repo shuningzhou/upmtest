@@ -10,7 +10,8 @@ namespace Parallel
     [ExecuteInEditMode]
     public class ParallelTransform : MonoBehaviour
     {
-        public bool Deterministic = true;
+        [Range(0.5f, 1f)]
+        public float Interpolation = 0.5f;
 
         [SerializeField]
         Fix64Vec3 _localPosition = Fix64Vec3.zero;
@@ -192,9 +193,13 @@ namespace Parallel
         void Update()
         {
             //only import from unity in editing mode
-            if(!Deterministic || !Application.isPlaying)
+            if(!Application.isPlaying)
             {
                 ImportFromUnity();
+            }
+            else
+            {
+                transform.localPosition = Vector3.Lerp(transform.localPosition, (Vector3)_localPosition, Interpolation);
             }
         }
 
@@ -203,16 +208,32 @@ namespace Parallel
         /// </summary>
         private void ExportToUnity()
         {
-            transform.localPosition = (Vector3)_localPosition;
-            if(_eularReady)
+            if(!Application.isPlaying)
             {
-                transform.localEulerAngles = (Vector3)_localEularAngles;
+                transform.localPosition = (Vector3)_localPosition;
+                if (_eularReady)
+                {
+                    transform.localEulerAngles = (Vector3)_localEularAngles;
+                }
+                else
+                {
+                    transform.localRotation = (Quaternion)_localRotation;
+                }
+                transform.localScale = (Vector3)_localScale;
             }
             else
             {
-                transform.localRotation = (Quaternion)_localRotation;
+                //update transform in the Update function
+                if (_eularReady)
+                {
+                    transform.localEulerAngles = (Vector3)_localEularAngles;
+                }
+                else
+                {
+                    transform.localRotation = (Quaternion)_localRotation;
+                }
+                transform.localScale = (Vector3)_localScale;
             }
-            transform.localScale = (Vector3)_localScale;
         }
 
         /// <summary>
