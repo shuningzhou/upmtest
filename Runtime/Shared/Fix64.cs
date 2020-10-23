@@ -76,6 +76,18 @@ namespace Parallel
             return (Raw == other.Raw);
         }
 
+        //rounding
+        public static int Ceiling(Fix64 value)
+        {
+            return (int)((value.Raw + (FixedConstants64.ONE - 1)) >> FixedConstants64.SHIFT);
+        }
+
+        public static int Floor(Fix64 value)
+        {
+            return (int)(value.Raw >> FixedConstants64.SHIFT);
+        }
+        
+        //casting
         public static explicit operator Fix64(int value)
         {
             return Fix64.FromRaw((long)value << FixedConstants64.SHIFT);
@@ -83,7 +95,7 @@ namespace Parallel
 
         public static explicit operator int(Fix64 value)
         {
-            return (int)(value.Raw >> FixedConstants64.SHIFT);
+            return (int)((value.Raw + FixedConstants64.HALF) >> FixedConstants64.SHIFT);
         }
 
         public static explicit operator Fix64(float value)
