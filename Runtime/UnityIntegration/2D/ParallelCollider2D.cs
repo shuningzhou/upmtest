@@ -14,7 +14,8 @@ namespace Parallel
 
          [SerializeField]
         bool isTrigger = false;
-
+        
+        [SerializeField]
         Fix64 _friction = Fix64.FromDivision(4, 10);
 
         [SerializeField]
