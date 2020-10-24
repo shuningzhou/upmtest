@@ -1021,6 +1021,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: ParallelSettings2D
       objectReference: {fileID: 0}
+    - target: {fileID: 4900768929434721978, guid: 9d20d1934b972664fbf3bf4b7e19af60,
+        type: 3}
+      propertyPath: fixedUpdateTime.Raw
+      value: 104857
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900768929434721978, guid: 9d20d1934b972664fbf3bf4b7e19af60,
+        type: 3}
+      propertyPath: velocityIteration
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d20d1934b972664fbf3bf4b7e19af60, type: 3}
 --- !u!1 &1014797411
@@ -1574,6 +1584,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _bodyType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3350771012442739521, guid: e8ddeb87f8ef54649a39f1e9aa634a9c,
+        type: 3}
+      propertyPath: Interpolation
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6495457919416485765, guid: e8ddeb87f8ef54649a39f1e9aa634a9c,
         type: 3}

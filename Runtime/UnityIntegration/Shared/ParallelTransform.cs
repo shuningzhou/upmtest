@@ -214,8 +214,12 @@ namespace Parallel
         /// </summary>
         private void ExportToUnity()
         {
-            transform.localPosition = (Vector3)_localPosition;
-            _interpolateProgress = 1;
+            if(!Application.isPlaying || !Interpolation)
+            {
+                transform.localPosition = (Vector3)_localPosition;
+                _interpolateProgress = 1;
+            }
+            
             if (_eularReady)
             {
                 transform.localEulerAngles = (Vector3)_localEularAngles;
@@ -281,6 +285,15 @@ namespace Parallel
                 {
                     return;
                 }
+
+                //set unity transform to the previous parallel transform position
+                if (Interpolation)
+                {
+                    transform.localPosition = (Vector3)_localPosition;
+                    _interpolateStartPosition = transform.localPosition;
+                    _interpolateProgress = 0;
+                }
+
                 _localPosition = value;
 
                 UpdateRigidbodyTransform();
@@ -532,7 +545,7 @@ namespace Parallel
             _localPosition = position;
             _internalLocalEularAngles = eulerAngles;
 
-            _internal_ExportToUnity();
+            ExportToUnity();
         }
 
         internal void _internal_WriteTranform(Fix64Vec3 position, Fix64Quat rotation)
@@ -548,7 +561,7 @@ namespace Parallel
             _localPosition = position;
             _internalLocalRotation = rotation;
 
-            _internal_ExportToUnity();
+            ExportToUnity();
         }
 
         internal void _internal_ExportToUnity()
