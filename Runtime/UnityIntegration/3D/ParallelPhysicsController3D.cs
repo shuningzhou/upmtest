@@ -8,7 +8,6 @@ namespace Parallel
         public Parallel.LogLevel LoggingLevel;
         public bool autoUpdate = false;
         public Fix64 fixedUpdateTime = Fix64.FromDivision(2, 100);
-        public float speed = 1;
         public int velocityIteration = 4;
         public bool allowSleep = true;
         public bool warmStart = true;
@@ -28,6 +27,7 @@ namespace Parallel
                 Parallel3D.warmStart = warmStart;
                 Parallel3D.SetLoggingLevel(LoggingLevel);
                 Parallel3D.bodyExportSize = bodyExportSize;
+                Time.fixedDeltaTime = (float)fixedUpdateTime;
             }
         }
 

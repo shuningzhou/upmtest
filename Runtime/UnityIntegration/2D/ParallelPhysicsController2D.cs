@@ -23,6 +23,7 @@ namespace Parallel
                 Parallel2D.gravity = gravity;
                 Parallel2D.SetLoggingLevel(LoggingLevel);
                 Parallel2D.bodyExportSize = bodyExportSize;
+                Time.fixedDeltaTime = (float)fixedUpdateTime;
             }
         }
 

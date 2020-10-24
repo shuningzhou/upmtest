@@ -10,8 +10,9 @@ namespace Parallel
     [ExecuteInEditMode]
     public class ParallelTransform : MonoBehaviour
     {
-        [Range(0.5f, 1f)]
-        public float Interpolation = 0.5f;
+        public bool Interpolation = true;
+        Vector3 _interpolateStartPosition;
+        float _interpolateProgress;
 
         [SerializeField]
         Fix64Vec3 _localPosition = Fix64Vec3.zero;
@@ -199,7 +200,12 @@ namespace Parallel
             }
             else
             {
-                transform.localPosition = Vector3.Lerp(transform.localPosition, (Vector3)_localPosition, Interpolation);
+                if(Interpolation)
+                {
+                    float increment = Time.deltaTime / Time.fixedDeltaTime;
+                    _interpolateProgress = Mathf.Min(1.0f, _interpolateProgress + increment);
+                    transform.localPosition = Vector3.Lerp(_interpolateStartPosition, (Vector3)_localPosition, _interpolateProgress);
+                }
             }
         }
 
@@ -208,32 +214,17 @@ namespace Parallel
         /// </summary>
         private void ExportToUnity()
         {
-            if(!Application.isPlaying)
+            transform.localPosition = (Vector3)_localPosition;
+            _interpolateProgress = 1;
+            if (_eularReady)
             {
-                transform.localPosition = (Vector3)_localPosition;
-                if (_eularReady)
-                {
-                    transform.localEulerAngles = (Vector3)_localEularAngles;
-                }
-                else
-                {
-                    transform.localRotation = (Quaternion)_localRotation;
-                }
-                transform.localScale = (Vector3)_localScale;
+                transform.localEulerAngles = (Vector3)_localEularAngles;
             }
             else
             {
-                //update transform in the Update function
-                if (_eularReady)
-                {
-                    transform.localEulerAngles = (Vector3)_localEularAngles;
-                }
-                else
-                {
-                    transform.localRotation = (Quaternion)_localRotation;
-                }
-                transform.localScale = (Vector3)_localScale;
+                transform.localRotation = (Quaternion)_localRotation;
             }
+            transform.localScale = (Vector3)_localScale;
         }
 
         /// <summary>
@@ -528,16 +519,53 @@ namespace Parallel
         //IMPORTATNT: all the internal transform data are in world space and should only be called on the root GameObject
         internal void _internal_WriteTranform(Fix64Vec3 position, Fix64Vec3 eulerAngles)
         {
+            //set unity transform to the previous parallel transform position
+            if (Interpolation)
+            {
+                transform.localPosition = (Vector3)_localPosition;
+                _interpolateStartPosition = transform.localPosition;
+                _interpolateProgress = 0;
+            }
+
+
             _localPosition = position;
             _internalLocalEularAngles = eulerAngles;
-            ExportToUnity();
+
+            _internal_ExportToUnity();
         }
 
         internal void _internal_WriteTranform(Fix64Vec3 position, Fix64Quat rotation)
         {
+            //set unity transform to the previous parallel transform position
+            if(Interpolation)
+            {
+                transform.localPosition = (Vector3)_localPosition;
+                _interpolateStartPosition = transform.localPosition;
+                _interpolateProgress = 0;
+            }
+
             _localPosition = position;
             _internalLocalRotation = rotation;
-            ExportToUnity();
+
+            _internal_ExportToUnity();
+        }
+
+        internal void _internal_ExportToUnity()
+        {
+            if(!Interpolation)
+            {
+                transform.localPosition = (Vector3)_localPosition;
+            }
+            
+            if (_eularReady)
+            {
+                transform.localEulerAngles = (Vector3)_localEularAngles;
+            }
+            else
+            {
+                transform.localRotation = (Quaternion)_localRotation;
+            }
+            transform.localScale = (Vector3)_localScale;
         }
     }
 }

@@ -5078,6 +5078,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1706341962362521628, guid: 174d4204bcce71441b8447431208a627,
+        type: 3}
+      propertyPath: autoUpdate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706341962362521628, guid: 174d4204bcce71441b8447431208a627,
+        type: 3}
+      propertyPath: fixedUpdateTime.Raw
+      value: 31457
+      objectReference: {fileID: 0}
     - target: {fileID: 8288772684901661520, guid: 174d4204bcce71441b8447431208a627,
         type: 3}
       propertyPath: LoggingLevel
