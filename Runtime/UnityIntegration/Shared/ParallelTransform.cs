@@ -238,6 +238,7 @@ namespace Parallel
             _localRotation = (Fix64Quat)transform.localRotation;
             _localEularAngles = (Fix64Vec3)transform.localEulerAngles;
             _localScale = (Fix64Vec3)transform.localScale;
+            _interpolateStartPosition = transform.localPosition;
         }
 
         public Fix64Vec3 position
