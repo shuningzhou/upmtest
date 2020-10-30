@@ -43,6 +43,15 @@ namespace Parallel
         [DllImport(PLUGIN_NAME)]
         internal static extern void AddExternalContactData(PContactExport2D contactExport);
 
+        [DllImport(PLUGIN_NAME)]
+        internal static extern IntPtr Snapshot(IntPtr worldHandle);
+
+        [DllImport(PLUGIN_NAME)]
+        internal static extern void Restore(IntPtr worldHandle, IntPtr snapshotHandle);
+
+        [DllImport(PLUGIN_NAME)]
+        internal static extern void DestroySnapshot(IntPtr snapshotHandle);
+
         //2D body
         [DllImport(PLUGIN_NAME)]
         internal static extern IntPtr CreateBody(IntPtr worldHandle, 

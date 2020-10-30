@@ -146,9 +146,56 @@ namespace Parallel.EditorTools
                 foreach (FileInfo fi in source.GetFiles())
                 {
                     string path = Path.Combine(target.FullName, fi.Name);
-                    //Debug.Log($"Copying src={fi.Name}");
-                    //Debug.Log($"Copying dst={path}");
-                    fi.CopyTo(path, true);
+                    Debug.Log($"Copying src={fi.Name}");
+                    Debug.Log($"Copying dst={path}");
+                    //only copy png files
+                    if(fi.Name.Contains(".png"))
+                    {
+                        fi.CopyTo(path, true);
+                    }
+                }
+            }
+
+            public static void test()
+            {
+                string dstFile = Application.dataPath + "/Gizmos";
+
+                if (!Directory.Exists(dstFile))
+                    Directory.CreateDirectory(dstFile);
+
+                dstFile = Application.dataPath + "/Gizmos/Parallel";
+
+                bool mustUpdate = false;
+                if (!Directory.Exists(dstFile))
+                {
+                    mustUpdate = true;
+                    Directory.CreateDirectory(dstFile);
+                }
+
+                string kPackageRoot = "Packages/com.socketweaver.parallel";
+                string path = Path.GetFullPath(kPackageRoot + "/Gizmos/Parallel");
+                path = path.Replace('\\', '/'); // because of GetFullPath()
+                int index = path.LastIndexOf("/Editor");
+                if (index >= 0)
+                    path = path.Substring(0, index);
+                if (path.Length > 0)
+                    path = Path.GetFullPath(path);  // stupid backslashes
+
+                //Debug.Log(path);
+
+                var dstTime = Directory.GetCreationTime(dstFile);
+                var srcTime = Directory.GetCreationTime(path);
+                //Debug.Log($"dstTime={dstTime}");
+                //Debug.Log($"srcTime={srcTime}");
+                if (true)//srcTime > dstTime || mustUpdate)
+                {
+                    Copy(path, dstFile);
+                    Debug.Log("Parallel icons updated");
+
+                }
+                else
+                {
+                    Debug.Log("icons update-to-date");
                 }
             }
 
@@ -177,7 +224,7 @@ namespace Parallel.EditorTools
                 if (path.Length > 0)
                 path = Path.GetFullPath(path);  // stupid backslashes
 
-                Debug.Log(path);
+                //Debug.Log(path);
 
                 var dstTime = Directory.GetCreationTime(dstFile);
                 var srcTime = Directory.GetCreationTime(path);
@@ -185,8 +232,6 @@ namespace Parallel.EditorTools
                 //Debug.Log($"srcTime={srcTime}");
                 if(srcTime > dstTime || mustUpdate)
                 {
-                    Debug.Log("Parallel icons updated");
-                    
                     Copy(path, dstFile);
                 }
                 else{

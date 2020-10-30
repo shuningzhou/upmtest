@@ -541,7 +541,6 @@ namespace Parallel
                 _interpolateProgress = 0;
             }
 
-
             _localPosition = position;
             _internalLocalEularAngles = eulerAngles;
 
@@ -561,6 +560,7 @@ namespace Parallel
             _localPosition = position;
             _internalLocalRotation = rotation;
 
+            
             ExportToUnity();
         }
 

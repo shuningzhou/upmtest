@@ -60,6 +60,14 @@ namespace Parallel
                     UInt32 contactID,
                     PConvexCacheExport3D convexExport);
 
+        [DllImport(PLUGIN_NAME)]
+        internal static extern IntPtr Snapshot(IntPtr worldHandle);
+
+        [DllImport(PLUGIN_NAME)]
+        internal static extern void Restore(IntPtr worldHandle, IntPtr snapshotHandle);
+
+        [DllImport(PLUGIN_NAME)]
+        internal static extern void DestroySnapshot(IntPtr snapshotHandle);
 
         //3D body
         [DllImport(PLUGIN_NAME)]
@@ -220,11 +228,7 @@ namespace Parallel
         [DllImport(PLUGIN_NAME)]
         internal static extern IntPtr ExportAndReturnNextContact(
                             IntPtr contactHandle, 
-                            ref PContactExport3D export,
-                            ref PConvexCacheExport3D convexExport,
-                            ref PManifoldExport3D manifoldExport3D1,
-                            ref PManifoldExport3D manifoldExport3D2,
-                            ref PManifoldExport3D manifoldExport3D3);
+                            ref PContactExport3D export);
 
         //convex
         [DllImport(PLUGIN_NAME)]

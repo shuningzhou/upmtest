@@ -106,12 +106,8 @@ namespace Parallel
     public struct PContactExport3D
     {
         public UInt32 id;
-        public int manifoldCount;
-
         public Fix64Vec3 relativeVelocity;
         public bool isTrigger;
-        public int type;
-        public UInt32 flag;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -301,7 +297,7 @@ namespace Parallel
                 PManifoldExport3D m2 = state.manifoldExports[manifoldIndex + 1];
                 PManifoldExport3D m3 = state.manifoldExports[manifoldIndex + 2];
 
-                NativeParallel3D.AddExternalContactWarmStartData(export.id, export.flag, (byte)export.manifoldCount, m1, m2, m3);
+                //NativeParallel3D.AddExternalContactWarmStartData(export.id, export.flag, (byte)export.manifoldCount, m1, m2, m3);
             }
         }
 
@@ -480,6 +476,28 @@ namespace Parallel
         static void DestroyWorld(PWorld3D world)
         {
             NativeParallel3D.DestroyWorld(world.IntPointer);
+        }
+
+        public static PSnapshot3D Snapshot()
+        {
+            IntPtr m_NativeObject = NativeParallel3D.Snapshot(internalWorld.IntPointer);
+            return new PSnapshot3D(m_NativeObject);
+        }
+
+        public static void Restore(PSnapshot3D snapshot)
+        {
+            NativeParallel3D.Restore(internalWorld.IntPointer, snapshot.IntPointer);
+
+            foreach (var pair in bodySortedList)
+            {
+                PBody3D body = pair.Value;
+                body.ReadNative();
+            }
+        }
+
+        public static void DestroySnapshot(PSnapshot3D snapshot)
+        {
+            NativeParallel2D.DestroySnapshot(snapshot.IntPointer);
         }
 
         public static void Step(Fix64 time, int velocityIterations, int positionIterations)
@@ -1234,7 +1252,6 @@ namespace Parallel
             {
                 PContactExport3D export = contactExports[i];
 
-                //some
                 if (export.id == 0)
                 {
                     continue;
@@ -1254,7 +1271,6 @@ namespace Parallel
 
                 c.Update(
                     contactPtrs[i],
-                    export.manifoldCount,
                     export.relativeVelocity,
                     export.isTrigger
                     );
@@ -1294,34 +1310,9 @@ namespace Parallel
             {
                 contactPtrs[index] = contactPtr;
                 PContactExport3D export = contactExports[index];
-                PConvexCacheExport3D convexExport = convexExports[index];
-                int manifoldIndex = 3 * index;
-                PManifoldExport3D m1 = manifoldExports[manifoldIndex];
-                PManifoldExport3D m2 = manifoldExports[manifoldIndex + 1];
-                PManifoldExport3D m3 = manifoldExports[manifoldIndex + 2];
 
-                contactPtr = NativeParallel3D.ExportAndReturnNextContact(contactPtr, ref export, ref convexExport, ref m1, ref m2, ref m3);
+                contactPtr = NativeParallel3D.ExportAndReturnNextContact(contactPtr, ref export);
                 contactExports[index] = export;
-                convexExports[index] = convexExport;
-
-                int manifoldCount = export.manifoldCount;
-
-                if(manifoldCount == 1)
-                {
-                    manifoldExports[manifoldIndex] = m1;
-                }
-                else if(manifoldCount == 2)
-                {
-                    manifoldExports[manifoldIndex] = m1;
-                    manifoldExports[manifoldIndex + 1] = m2;
-                }
-                else if(manifoldCount == 3)
-                {
-                    manifoldExports[manifoldIndex] = m1;
-                    manifoldExports[manifoldIndex + 1] = m2;
-                    manifoldExports[manifoldIndex + 2] = m3;
-                }
-
                 index++;
             }
 

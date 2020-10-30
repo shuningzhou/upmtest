@@ -3,14 +3,6 @@ namespace Parallel
 {
     public class PCollision3D
     {
-        public int contactCount
-        {
-            get
-            {
-                return _contact.ContactCount;
-            }
-        }
-
         public IParallelRigidbody3D otherRigidbody { get; private set; }
 
         public Fix64Vec3 relativeVelocity

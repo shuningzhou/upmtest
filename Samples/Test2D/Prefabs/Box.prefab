@@ -96,10 +96,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f0dd065684c8da429b0d51808b4a9e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Deterministic: 1
+  Interpolation: 1
   _localPosition:
-    RawX: 0
-    RawY: 0
+    RawX: -5242880
+    RawY: 1048576
     RawZ: 0
   _localRotation:
     RawX: 0
@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTrigger: 0
+  _friction:
+    Raw: 419430
   _bounciness:
     Raw: 209715
   _spriteRendererSize:
@@ -147,6 +149,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2714b05307525a34a8ed6c96406083c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _body2D:
+    position:
+      RawX: 0
+      RawY: 0
+    angle:
+      Raw: 0
   _bodyID: 0
   _bodyType: 2
   _linearDampling:

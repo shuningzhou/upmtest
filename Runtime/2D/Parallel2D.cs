@@ -274,13 +274,23 @@ namespace Parallel
 
         static void ExportFromEngine()
         {
-            ExportContacts();
-            PrepareContacts();
-
-            foreach(var pair in bodySortedList)
+            //using (new SProfiler($"ExportContacts"))
             {
-                PBody2D body = pair.Value;
-                body.ReadNative();
+                ExportContacts();
+            }
+
+            //using (new SProfiler($"PrepareContacts"))
+            {
+                PrepareContacts();
+            }
+
+            //using (new SProfiler($"body.ReadNative"))
+            {
+                foreach (var pair in bodySortedList)
+                {
+                    PBody2D body = pair.Value;
+                    body.ReadNative();
+                }
             }
         }
 
@@ -394,6 +404,28 @@ namespace Parallel
             NativeParallel2D.DestroyWorld(world.IntPointer);
         }
 
+        public static PSnapshot2D Snapshot()
+        {
+            IntPtr m_NativeObject = NativeParallel2D.Snapshot(internalWorld.IntPointer);
+            return new PSnapshot2D(m_NativeObject);
+        }
+
+        public static void Restore(PSnapshot2D snapshot)
+        {
+            NativeParallel2D.Restore(internalWorld.IntPointer, snapshot.IntPointer);
+
+            foreach (var pair in bodySortedList)
+            {
+                PBody2D body = pair.Value;
+                body.ReadNative();
+            }
+        }
+
+        public static void DestroySnapshot(PSnapshot2D snapshot)
+        {
+            NativeParallel2D.DestroySnapshot(snapshot.IntPointer);
+        }
+
         public static void Step(Fix64 time, int velocityIterations, int positionIterations)
         {
             if (!initialized)
@@ -401,12 +433,17 @@ namespace Parallel
                 Initialize();
             }
 
-            ResetEnterContacts();
-            ResetExitContacts();
-            ResetAllContacts();
+            //using (new SProfiler($"Reset contacts"))
+            {
+                ResetEnterContacts();
+                ResetExitContacts();
+                ResetAllContacts();
+            }
 
-
-            NativeParallel2D.Step(internalWorld.IntPointer, time, velocityIterations, positionIterations);
+            //using (new SProfiler($"Engine Step"))
+            {
+                NativeParallel2D.Step(internalWorld.IntPointer, time, velocityIterations, positionIterations);
+            }
 
             ExportFromEngine();
         }
