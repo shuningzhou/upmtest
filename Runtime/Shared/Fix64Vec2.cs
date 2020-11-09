@@ -187,6 +187,51 @@ namespace Parallel
             return Intersection(a1, a2, b1, b2, out found);
         }
 
+        // Calculate the distance between
+        // point pt and the segment p1 --> p2.
+        //http://csharphelper.com/blog/2016/09/find-the-shortest-distance-between-a-point-and-a-line-segment-in-c/
+        public static Fix64 DistanceToSegment(
+    Fix64Vec2 pt, Fix64Vec2 p1, Fix64Vec2 p2, out Fix64Vec2 closest)
+        {
+            Fix64 dx = p2.x - p1.x;
+            Fix64 dy = p2.y - p1.y;
+            if ((dx == Fix64.zero) && (dy == Fix64.zero))
+            {
+                // It's a point not a line segment.
+                closest = p1;
+                dx = pt.x - p1.x;
+                dy = pt.y - p1.y;
+                return Fix64Math.Sqrt(dx * dx + dy * dy);
+            }
+
+            // Calculate the t that minimizes the distance.
+            Fix64 t = ((pt.x - p1.x) * dx + (pt.y - p1.y) * dy) /
+                (dx * dx + dy * dy);
+
+            // See if this represents one of the segment's
+            // end points or a point in the middle.
+            if (t < Fix64.zero)
+            {
+                closest = p1;
+                dx = pt.x - p1.x;
+                dy = pt.y - p1.y;
+            }
+            else if (t > Fix64.one)
+            {
+                closest = p2;
+                dx = pt.x - p2.x;
+                dy = pt.y - p2.y;
+            }
+            else
+            {
+                closest = new Fix64Vec2(p1.x + t * dx, p1.y + t * dy);
+                dx = pt.x - closest.x;
+                dy = pt.y - closest.y;
+            }
+
+            return Fix64Math.Sqrt(dx * dx + dy * dy);
+        }
+
         public override string ToString()
         {
             return $"Fix64Vec2({x}, {y})";

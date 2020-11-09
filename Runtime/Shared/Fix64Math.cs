@@ -7,6 +7,12 @@ namespace Parallel
     public static class Fix64Math
     {
         //Fix64
+        public static Fix64 Sqrt(Fix64 value)
+        {
+            long sqrtValue = NativeFixedMath.Sqrt64(value.Raw);
+            return Fix64.FromRaw(sqrtValue);
+        }
+
         public static Fix64 Max(Fix64 a, Fix64 b)
         {
             return a > b ? a : b;
